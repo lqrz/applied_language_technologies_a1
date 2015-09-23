@@ -58,7 +58,7 @@ def alignments2Words(positions, de_sent, en_sent):
     :return: phrase tuple in words
     '''
     # return [(map(de_sent.__getitem__, a[0]), map(en_sent.__getitem__, a[1]), a) for a in alignments]
-    return (map(de_sent.__getitem__, positions[0]), map(en_sent.__getitem__, positions[1]))
+    return (' '.join(map(de_sent.__getitem__, positions[0])), ' '.join(map(en_sent.__getitem__, positions[1])))
 
 def update_word_count(de_sent, en_sent):
     '''
@@ -236,7 +236,7 @@ if __name__ == '__main__':
 
     # resulting phrases
     phrases = []
-    phrases_str = []
+    phrases_str = set()
 
     # data read from files
     data_alignments = dict()
@@ -310,15 +310,16 @@ if __name__ == '__main__':
 
             for de_f in de_candidate_phrases:
                 if satC1(de_f, en_cand, en_alignment_dict) and satC2(de_f, en_cand, de_alignment_dict):
-                    phrases.append((de_f,en_cand))
 
                     translation = alignments2Words((de_f, en_cand), de_sent, en_sent)
-                    phrases_str.append(translation)
+                    if translation not in phrases_str:
+                        phrases_str.add(translation)
+                        phrases.append((de_f,en_cand))
 
                     de_phrase_alignments = {pos: de_alignment_dict[pos] for pos in de_f}
                     en_phrase_alignments = {pos: en_alignment_dict[pos] for pos in en_cand}
-                    data_alignments[(' '.join(translation[0]), ' '.join(translation[1]))].append((de_phrase_alignments, en_phrase_alignments))
-                    update_phrase_counts(' '.join(translation[0]), ' '.join(translation[1]))
+                    data_alignments[(translation[0], translation[1])].append((de_phrase_alignments, en_phrase_alignments))
+                    update_phrase_counts(translation[0], translation[1])
             # if valid_phrases:
             #     phrases.extend(valid_phrases)
             #     phrases_str.extend(alignments2Words(valid_phrases, de_sent, en_sent))
@@ -365,9 +366,11 @@ if __name__ == '__main__':
     #     en_freq[en_phrase_str] += 1
 
     # compute probabilities
-    for p in phrases_str:
-        de_phrase_str = ' '.join(p[0])
-        en_phrase_str = ' '.join(p[1])
+    # for p in phrases_str:
+    for de_phrase_str,en_phrase_str in phrases_str:
+        # print p
+        # de_phrase_str = ' '.join(p[0])
+        # en_phrase_str = ' '.join(p[1])
         t = (de_phrase_str, en_phrase_str)
         # alignments = p[2]
 
@@ -386,14 +389,16 @@ if __name__ == '__main__':
             en_start = min(en_phrase_aligns.keys())
 
             #TODO: max
-            prob = compute_lexical_prob(en_phrase_aligns, de_start, en_start, de_word_freq, p[0], p[1], True)
+            # prob = compute_lexical_prob(en_phrase_aligns, de_start, en_start, de_word_freq, p[0], p[1], True)
+            prob = compute_lexical_prob(en_phrase_aligns, de_start, en_start, de_word_freq, de_phrase_str.split(), en_phrase_str.split(), True)
             lex_e[t] = max([prob, lex_e[t]])
-            prob = compute_lexical_prob(de_phrase_aligns, de_start, en_start, en_word_freq, p[0], p[1], False)
+            # prob = compute_lexical_prob(de_phrase_aligns, de_start, en_start, en_word_freq, p[0], p[1], False)
+            prob = compute_lexical_prob(de_phrase_aligns, de_start, en_start, en_word_freq, de_phrase_str.split(), en_phrase_str.split(), False)
             lex_f[t] = max([prob, lex_f[t]])
 
         # save_output
         save_data(t)
 
-    print 'phrase probs: ', phrase_probs
-    print 'lex_e probs: ', lex_e
-    print 'lex_f: ', lex_f
+    # print 'phrase probs: ', phrase_probs
+    # print 'lex_e probs: ', lex_e
+    # print 'lex_f: ', lex_f
