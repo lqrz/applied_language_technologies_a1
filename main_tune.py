@@ -264,6 +264,7 @@ if __name__ == '__main__':
 
     data_alignments = defaultdict(list)
 
+    print 'Extracting phrases \n'
     # iterate sentences
     for line in f_en:
 
@@ -365,9 +366,10 @@ if __name__ == '__main__':
     #     de_freq[de_phrase_str] += 1
     #     en_freq[en_phrase_str] += 1
 
+    print 'Computing probabilities \n'
     # compute probabilities
     # for p in phrases_str:
-    for de_phrase_str,en_phrase_str in phrases_str:
+    for i,(de_phrase_str,en_phrase_str) in enumerate(phrases_str):
         # print p
         # de_phrase_str = ' '.join(p[0])
         # en_phrase_str = ' '.join(p[1])
@@ -388,7 +390,6 @@ if __name__ == '__main__':
             de_start = min(de_phrase_aligns.keys())
             en_start = min(en_phrase_aligns.keys())
 
-            #TODO: max
             # prob = compute_lexical_prob(en_phrase_aligns, de_start, en_start, de_word_freq, p[0], p[1], True)
             prob = compute_lexical_prob(en_phrase_aligns, de_start, en_start, de_word_freq, de_phrase_str.split(), en_phrase_str.split(), True)
             lex_e[t] = max([prob, lex_e[t]])
@@ -396,8 +397,20 @@ if __name__ == '__main__':
             prob = compute_lexical_prob(de_phrase_aligns, de_start, en_start, en_word_freq, de_phrase_str.split(), en_phrase_str.split(), False)
             lex_f[t] = max([prob, lex_f[t]])
 
+        if (i+1) % 100 == 0:
+            sys.stdout.write(str(i+1) + ' out of ' + str(len(phrases_str)) + '\r')
+            sys.stdout.flush()
+
+    print 'Saving to file \n'
+    for de_phrase_str,en_phrase_str in phrases_str:
+        # print p
+        # de_phrase_str = ' '.join(p[0])
+        # en_phrase_str = ' '.join(p[1])
+        t = (de_phrase_str, en_phrase_str)
         # save_output
         save_data(t)
+
+    print 'End'
 
     # print 'phrase probs: ', phrase_probs
     # print 'lex_e probs: ', lex_e
