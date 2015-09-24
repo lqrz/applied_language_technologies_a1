@@ -365,6 +365,8 @@ if __name__ == '__main__':
     #     de_freq[de_phrase_str] += 1
     #     en_freq[en_phrase_str] += 1
 
+    low_aligns = dict()
+
     print 'Computing probabilities \n'
     # compute probabilities
     # for p in phrases_str:
@@ -385,6 +387,10 @@ if __name__ == '__main__':
 
         # compute lex probabilities
         for de_phrase_aligns, en_phrase_aligns in data_alignments[t]:
+
+            if len(en_phrase_str.split()) > 2 * len(en_phrase_aligns):
+                low_aligns[de_phrase_str, en_phrase_str] = en_phrase_aligns
+                
             # lex_f[de_word] = map(lambda a:joint_word_freq[(de_word,p[1][a])] / float(en_word_freq[p[1][a]]), en_aligns)
             de_start = min(de_phrase_aligns.keys())
             en_start = min(en_phrase_aligns.keys())
