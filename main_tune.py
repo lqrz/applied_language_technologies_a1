@@ -412,8 +412,9 @@ if __name__ == '__main__':
     print 'End'
 
     pickle.dump(phrases_str, open('phrases.p', 'wb'))
-    pickle.dump(p_e_f, open('p_e_f.p', 'wb'))
-    pickle.dump(p_f_e, open('p_f_e.p', 'wb'))
+    pickle.dump(joint_freq, open('joint_freq.p', 'wb'))
+    pickle.dump(de_freq, open('de_freq.p', 'wb'))
+    pickle.dump(en_freq, open('en_freq.p', 'wb'))
     pickle.dump(lex_e, open('lex_e.p', 'wb'))
     pickle.dump(lex_f, open('lex_f.p', 'wb'))
 
