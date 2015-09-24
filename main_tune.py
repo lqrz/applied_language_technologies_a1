@@ -5,6 +5,7 @@ from collections import Counter
 import time
 from collections import defaultdict
 import sys
+import pickle
 
 def satC1(de_pos, en_pos, en_alignment_dict):
     '''
@@ -163,7 +164,6 @@ def save_data(t):
     global lex_e
     global lex_f
     global phrase_probs
-    global mode
     global joint_freq
     global de_freq
     global en_freq
@@ -212,7 +212,6 @@ if __name__ == '__main__':
     de_filepath = 'prueba.de'
     align_filepath = 'prueba.aligned'
     output_filepath = 'prueba.output'
-    mode = 1
 
     if len(sys.argv) == 4:
         en_filepath = sys.argv[1]
@@ -411,6 +410,12 @@ if __name__ == '__main__':
         save_data(t)
 
     print 'End'
+
+    pickle.dump(phrases_str, open('phrases.p', 'wb'))
+    pickle.dump(p_e_f, open('p_e_f.p', 'wb'))
+    pickle.dump(p_f_e, open('p_f_e.p', 'wb'))
+    pickle.dump(lex_e, open('lex_e.p', 'wb'))
+    pickle.dump(lex_f, open('lex_f.p', 'wb'))
 
     # print 'phrase probs: ', phrase_probs
     # print 'lex_e probs: ', lex_e
