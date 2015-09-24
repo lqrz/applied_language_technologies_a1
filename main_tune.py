@@ -389,7 +389,7 @@ if __name__ == '__main__':
         for de_phrase_aligns, en_phrase_aligns in data_alignments[t]:
 
             if len(en_phrase_str.split()) > 2 * len(en_phrase_aligns):
-                low_aligns[de_phrase_str, en_phrase_str] = en_phrase_aligns
+                low_aligns[(de_phrase_str, en_phrase_str)] = en_phrase_aligns
                 
             # lex_f[de_word] = map(lambda a:joint_word_freq[(de_word,p[1][a])] / float(en_word_freq[p[1][a]]), en_aligns)
             de_start = min(de_phrase_aligns.keys())
@@ -420,6 +420,7 @@ if __name__ == '__main__':
     pickle.dump(phrases_str, open('phrases.p', 'wb'))
     pickle.dump(joint_freq, open('joint_freq.p', 'wb'))
     pickle.dump(low_aligns, open('low_aligns.p','wb'))
+    pickle.dump(data_alignments, open('data_alignments.p','wb'))
     pickle.dump(de_freq, open('de_freq.p', 'wb'))
     pickle.dump(en_freq, open('en_freq.p', 'wb'))
     pickle.dump(lex_e, open('lex_e.p', 'wb'))
